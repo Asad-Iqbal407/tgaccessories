@@ -67,17 +67,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Get existing cart or create new one
-    let cart = await db.collection('carts').findOne({ sessionId });
-
-    if (!cart) {
-      cart = {
-        sessionId,
-        items: [],
-        total: 0,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      } as any;
-    }
+    const cart = await db.collection('carts').findOne({ sessionId }) || {
+      sessionId,
+      items: [],
+      total: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
     // Check if product already in cart
     const existingItemIndex = cart!.items.findIndex((item: any) => item.productId === productId);
