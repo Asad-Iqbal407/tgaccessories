@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if product already in cart
-    const existingItemIndex = cart.items.findIndex((item: any) => item.productId === productId);
+    const existingItemIndex = cart!.items.findIndex((item: any) => item.productId === productId);
 
     if (existingItemIndex > -1) {
       // Update quantity
