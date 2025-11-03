@@ -1,0 +1,11 @@
+- [x] Update SIMs products with unique images
+- [x] Update Smoking Papers products with unique images
+- [x] Update Chargers products with unique images
+- [x] Update Cables products with unique images
+- [x] Update Power products with unique images
+- [x] Add CartItem interface to types
+- [x] Create CartContext with state management
+- [x] Wrap app with CartProvider in layout
+- [x] Update Header to show cart count and link to cart page
+- [x] Create cart page with full cart functionality
+- [x] Add add to cart functionality to category pages
