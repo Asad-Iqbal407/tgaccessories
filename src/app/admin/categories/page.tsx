@@ -96,15 +96,10 @@ export default function AdminCategories() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log(`Input changed: ${name} = ${value}`);
-    setFormData(prev => {
-      const newState = {
-        ...prev,
-        [name]: value
-      };
-      console.log('New form state:', newState);
-      return newState;
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -201,10 +196,22 @@ export default function AdminCategories() {
       <AdminSidebar />
       
       <div className="md:pl-64 transition-all duration-300">
-        <nav className="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <nav className="bg-white border-b border-slate-200 sticky top-0 z-30">
           <div className="px-8 py-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold text-slate-800">Categories Management</h1>
             <div className="flex items-center space-x-4">
+              <button 
+                onClick={() => {
+                  setLoading(true);
+                  fetchCategories();
+                }}
+                className="p-2 text-slate-500 hover:text-blue-600 transition-colors rounded-lg hover:bg-slate-100"
+                title="Refresh Data"
+              >
+                <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
               <span className="text-sm text-slate-500 hidden sm:block">Welcome back, Admin</span>
             </div>
           </div>
@@ -275,119 +282,114 @@ export default function AdminCategories() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={handleCloseModal}></div>
-            </div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+            onClick={handleCloseModal}
+          />
+          
+          {/* Content */}
+          <div className="relative bg-white rounded-2xl w-full max-w-lg shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+            <div className="px-8 pt-8 pb-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-slate-900" id="modal-title">
+                  {isEditMode ? 'Edit Category' : 'Add New Category'}
+                </h3>
+                <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-slate-100">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div className="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200">
-              <div className="bg-white px-8 pt-8 pb-6">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-2xl font-bold text-slate-900" id="modal-title">
-                        {isEditMode ? 'Edit Category' : 'Add New Category'}
-                      </h3>
-                      <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-600 transition-colors">
-                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
+              <form onSubmit={handleSubmit} className="space-y-6" key={isEditMode ? `edit-${formData.id}` : 'add'}>
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                  <div>
+                    <label htmlFor="id" className="block text-sm font-semibold text-slate-700 mb-1">Category ID (URL Slug)</label>
+                    <input
+                      type="text"
+                      name="id"
+                      id="id"
+                      required
+                      disabled={isEditMode}
+                      value={formData.id || ''}
+                      onChange={handleInputChange}
+                      className={`block w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${isEditMode ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-900'}`}
+                      placeholder="e.g. mobile-phones"
+                    />
+                    <p className="mt-1.5 text-xs text-slate-500">
+                      {isEditMode ? 'ID cannot be changed' : 'Must be unique. Used in the page URL.'}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-1">Category Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      id="name"
+                      required
+                      autoFocus
+                      value={formData.name || ''}
+                      onChange={handleInputChange}
+                      className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                      placeholder="e.g. Mobile Phones"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="image" className="block text-sm font-semibold text-slate-700 mb-1">Image URL</label>
+                    <div className="space-y-3">
+                      <input
+                        type="url"
+                        name="image"
+                        id="image"
+                        required
+                        value={formData.image || ''}
+                        onChange={handleInputChange}
+                        className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                        placeholder="https://images.unsplash.com/..."
+                      />
+                      {formData.image && (
+                        <div className="h-32 w-full rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
+                          <img src={formData.image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL')} />
+                        </div>
+                      )}
                     </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-6" key={isEditMode ? `edit-${formData.id}` : 'add'}>
-                      <div className="space-y-4">
-                        <div>
-                          <label htmlFor="id" className="block text-sm font-semibold text-slate-700 mb-1">Category ID (URL Slug)</label>
-                          <input
-                            type="text"
-                            name="id"
-                            id="id"
-                            required
-                            disabled={isEditMode}
-                            value={formData.id || ''}
-                            onChange={handleInputChange}
-                            className={`block w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${isEditMode ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-900'}`}
-                            placeholder="e.g. mobile-phones"
-                          />
-                          <p className="mt-1.5 text-xs text-slate-500">
-                            {isEditMode ? 'ID cannot be changed' : 'Must be unique. Used in the page URL.'}
-                          </p>
-                        </div>
-                        
-                        <div>
-                          <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-1">Category Name</label>
-                          <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            required
-                            autoFocus
-                            value={formData.name || ''}
-                            onChange={handleInputChange}
-                            className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                            placeholder="e.g. Mobile Phones"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label htmlFor="image" className="block text-sm font-semibold text-slate-700 mb-1">Image URL</label>
-                          <div className="space-y-3">
-                            <input
-                              type="url"
-                              name="image"
-                              id="image"
-                              required
-                              value={formData.image || ''}
-                              onChange={handleInputChange}
-                              className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                              placeholder="https://images.unsplash.com/..."
-                            />
-                            {formData.image && (
-                              <div className="h-32 w-full rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
-                                <img src={formData.image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL')} />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
-                          <textarea
-                            name="description"
-                            id="description"
-                            rows={4}
-                            required
-                            value={formData.description || ''}
-                            onChange={handleInputChange}
-                            className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none resize-none"
-                            placeholder="Enter a brief description of this category..."
-                          ></textarea>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-col-reverse sm:flex-row sm:gap-3 pt-4">
-                        <button
-                          type="button"
-                          onClick={handleCloseModal}
-                          className="mt-3 sm:mt-0 w-full inline-flex justify-center items-center px-6 py-3 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-lg shadow-blue-200"
-                        >
-                          {isEditMode ? 'Save Changes' : 'Create Category'}
-                        </button>
-                      </div>
-                    </form>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
+                    <textarea
+                      name="description"
+                      id="description"
+                      rows={4}
+                      required
+                      value={formData.description || ''}
+                      onChange={handleInputChange}
+                      className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none resize-none"
+                      placeholder="Enter a brief description of this category..."
+                    ></textarea>
                   </div>
                 </div>
-              </div>
+                
+                <div className="flex flex-col-reverse sm:flex-row sm:gap-3 pt-4 border-t border-slate-100 mt-2">
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    className="mt-3 sm:mt-0 w-full inline-flex justify-center items-center px-6 py-3 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-lg shadow-blue-200"
+                  >
+                    {isEditMode ? 'Save Changes' : 'Create Category'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
