@@ -96,10 +96,15 @@ export default function AdminCategories() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    console.log(`Input changed: ${name} = ${value}`);
+    setFormData(prev => {
+      const newState = {
+        ...prev,
+        [name]: value
+      };
+      console.log('New form state:', newState);
+      return newState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -278,7 +283,13 @@ export default function AdminCategories() {
                       {isEditMode ? 'Edit Category' : 'Add New Category'}
                     </h3>
                     <div className="mt-4">
-                      <form onSubmit={handleSubmit} className="space-y-4">
+                      {/* Debug info - only visible in dev */}
+                      {process.env.NODE_ENV === 'development' && (
+                        <div className="mb-2 p-2 bg-slate-100 text-[10px] font-mono rounded">
+                          Mode: {isEditMode ? 'Edit' : 'Add'} | ID: {formData.id}
+                        </div>
+                      )}
+                      <form onSubmit={handleSubmit} className="space-y-4" key={isEditMode ? `edit-${formData.id}` : 'add'}>
                         <div>
                           <label htmlFor="id" className="block text-sm font-medium text-gray-700">Category ID (Slug)</label>
                           <input
@@ -287,12 +298,16 @@ export default function AdminCategories() {
                             id="id"
                             required
                             disabled={isEditMode}
-                            value={formData.id}
+                            value={formData.id || ''}
                             onChange={handleInputChange}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${isEditMode ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${isEditMode ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''}`}
                             placeholder="e.g. mobile-phones"
                           />
-                          {!isEditMode && <p className="mt-1 text-xs text-gray-500">Unique identifier used in URL. Cannot be changed later.</p>}
+                          {isEditMode ? (
+                            <p className="mt-1 text-xs text-amber-600 font-medium">This field is the unique identifier and cannot be changed.</p>
+                          ) : (
+                            <p className="mt-1 text-xs text-gray-500">Unique identifier used in URL. Cannot be changed later.</p>
+                          )}
                         </div>
                         
                         <div>
@@ -302,10 +317,10 @@ export default function AdminCategories() {
                             name="name"
                             id="name"
                             required
-                            autoFocus={isEditMode}
-                            value={formData.name}
+                            autoFocus
+                            value={formData.name || ''}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm relative z-[110]"
                             placeholder="e.g. Mobile Phones"
                           />
                         </div>
@@ -317,9 +332,9 @@ export default function AdminCategories() {
                             name="image"
                             id="image"
                             required
-                            value={formData.image}
+                            value={formData.image || ''}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm relative z-[110]"
                             placeholder="https://example.com/image.jpg"
                           />
                         </div>
@@ -331,9 +346,9 @@ export default function AdminCategories() {
                             id="description"
                             rows={3}
                             required
-                            value={formData.description}
+                            value={formData.description || ''}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm relative z-[110]"
                             placeholder="Category description..."
                           ></textarea>
                         </div>
