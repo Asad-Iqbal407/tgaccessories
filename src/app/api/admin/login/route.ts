@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const client = await clientPromise;
-    const db = client.db('tgaccessories');
+    const db = client.db('tg_accessories');
 
     // Find admin user
     const admin = await db.collection('admins').findOne({ email });
