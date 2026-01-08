@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(
   request: Request,
   props: { params: Promise<{ id: string }> }
