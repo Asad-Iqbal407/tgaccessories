@@ -146,16 +146,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addItem = async (product: Product) => {
-    // Check if user is authenticated
-    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-
-    if (!isAuthenticated) {
-      // Show alert and redirect to login
-      alert('Please sign in to add items to your cart');
-      window.location.href = '/auth/login';
-      return;
-    }
-
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
 
@@ -186,14 +176,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }));
         dispatch({ type: 'LOAD_CART', payload: cartItems });
         dispatch({ type: 'SET_TOTAL', payload: data.total });
-        alert('Product added to cart successfully!');
+        
       } else {
         const errorData = await response.json();
-        alert(`Failed to add product to cart: ${errorData.error || 'Unknown error'}`);
+        
       }
     } catch (error) {
       console.error('Error adding item to cart:', error);
-      alert('Failed to add product to cart. Please try again.');
+      
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -280,7 +270,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
+    try {
+      // Clear from database
+      await fetch('/api/cart/clear', { method: 'POST' });
+    } catch (error) {
+      console.error('Error clearing cart from database:', error);
+    }
+    // Clear local state
     dispatch({ type: 'CLEAR_CART' });
   };
 

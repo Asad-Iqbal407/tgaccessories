@@ -16,32 +16,29 @@ export async function POST(request: NextRequest) {
     const client = await clientPromise;
     const db = client.db('tgaccessories');
 
-    // Check if admin already exists
-    const existingAdmin = await db.collection('admins').findOne({ email });
-    if (existingAdmin) {
-      return NextResponse.json(
-        { error: 'Admin already exists' },
-        { status: 400 }
-      );
-    }
-
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create admin user
-    const admin = {
-      email,
-      password: hashedPassword,
-      role: 'admin',
-      createdAt: new Date(),
-    };
-
-    const result = await db.collection('admins').insertOne(admin);
+    // Create or update admin user
+    const result = await db.collection('admins').updateOne(
+      { email },
+      {
+        $set: {
+          password: hashedPassword,
+          role: 'admin',
+          updatedAt: new Date(),
+        },
+        $setOnInsert: {
+          createdAt: new Date(),
+        }
+      },
+      { upsert: true }
+    );
 
     return NextResponse.json(
       {
-        message: 'Admin user created successfully',
-        id: result.insertedId
+        message: 'Admin user created/updated successfully',
+        result
       },
       { status: 201 }
     );
