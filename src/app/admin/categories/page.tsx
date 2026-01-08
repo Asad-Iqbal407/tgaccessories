@@ -54,15 +54,20 @@ export default function AdminCategories() {
     }
   };
 
-  const handleOpenModal = (category?: Category) => {
+  const handleOpenModal = (category?: Category, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
     if (category) {
       setIsEditMode(true);
       setCurrentCategory(category);
       setFormData({
-        id: category.id,
-        name: category.name,
-        description: category.description,
-        image: category.image
+        id: category.id || '',
+        name: category.name || '',
+        description: category.description || '',
+        image: category.image || ''
       });
     } else {
       setIsEditMode(false);
@@ -221,7 +226,7 @@ export default function AdminCategories() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
                     <button 
-                      onClick={() => handleOpenModal(category)}
+                      onClick={(e) => handleOpenModal(category, e)}
                       className="p-2 bg-white rounded-lg text-blue-600 hover:text-blue-700 shadow-lg"
                       title="Edit"
                     >
@@ -257,7 +262,7 @@ export default function AdminCategories() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="fixed inset-0 z-[100] overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity" aria-hidden="true">
               <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={handleCloseModal}></div>
@@ -297,6 +302,7 @@ export default function AdminCategories() {
                             name="name"
                             id="name"
                             required
+                            autoFocus={isEditMode}
                             value={formData.name}
                             onChange={handleInputChange}
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
