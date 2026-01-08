@@ -109,9 +109,11 @@ export default function AdminCategories() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting form...', { isEditMode, formData });
     
     try {
       if (isEditMode && currentCategory.id) {
+        console.log(`Updating category: ${currentCategory.id}`);
         // Update existing category
         const response = await fetch(`/api/categories/${currentCategory.id}`, {
           method: 'PUT',
@@ -125,14 +127,18 @@ export default function AdminCategories() {
           })
         });
         
+        const data = await response.json();
+        console.log('Update Response:', { status: response.status, data });
+
         if (response.ok) {
           alert('Category updated successfully');
-          fetchCategories();
+          await fetchCategories();
           handleCloseModal();
         } else {
-          alert('Failed to update category');
+          alert(`Failed to update category: ${data.error || 'Unknown error'}`);
         }
       } else {
+        console.log('Creating new category');
         // Create new category
         const response = await fetch('/api/categories', {
           method: 'POST',
@@ -142,18 +148,20 @@ export default function AdminCategories() {
           body: JSON.stringify(formData)
         });
         
+        const data = await response.json();
+        console.log('Create Response:', { status: response.status, data });
+
         if (response.ok) {
           alert('Category created successfully');
-          fetchCategories();
+          await fetchCategories();
           handleCloseModal();
         } else {
-          const data = await response.json();
-          alert(data.error || 'Failed to create category');
+          alert(`Failed to create category: ${data.error || 'Unknown error'}`);
         }
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('An error occurred');
+      alert('An error occurred. Please check console.');
     }
   };
 
@@ -275,23 +283,25 @@ export default function AdminCategories() {
 
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200">
+              <div className="bg-white px-8 pt-8 pb-6">
                 <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                      {isEditMode ? 'Edit Category' : 'Add New Category'}
-                    </h3>
-                    <div className="mt-4">
-                      {/* Debug info - only visible in dev */}
-                      {process.env.NODE_ENV === 'development' && (
-                        <div className="mb-2 p-2 bg-slate-100 text-[10px] font-mono rounded">
-                          Mode: {isEditMode ? 'Edit' : 'Add'} | ID: {formData.id}
-                        </div>
-                      )}
-                      <form onSubmit={handleSubmit} className="space-y-4" key={isEditMode ? `edit-${formData.id}` : 'add'}>
+                  <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-slate-900" id="modal-title">
+                        {isEditMode ? 'Edit Category' : 'Add New Category'}
+                      </h3>
+                      <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-6" key={isEditMode ? `edit-${formData.id}` : 'add'}>
+                      <div className="space-y-4">
                         <div>
-                          <label htmlFor="id" className="block text-sm font-medium text-gray-700">Category ID (Slug)</label>
+                          <label htmlFor="id" className="block text-sm font-semibold text-slate-700 mb-1">Category ID (URL Slug)</label>
                           <input
                             type="text"
                             name="id"
@@ -300,18 +310,16 @@ export default function AdminCategories() {
                             disabled={isEditMode}
                             value={formData.id || ''}
                             onChange={handleInputChange}
-                            className={`mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${isEditMode ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''}`}
+                            className={`block w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none ${isEditMode ? 'bg-slate-50 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-900'}`}
                             placeholder="e.g. mobile-phones"
                           />
-                          {isEditMode ? (
-                            <p className="mt-1 text-xs text-amber-600 font-medium">This field is the unique identifier and cannot be changed.</p>
-                          ) : (
-                            <p className="mt-1 text-xs text-gray-500">Unique identifier used in URL. Cannot be changed later.</p>
-                          )}
+                          <p className="mt-1.5 text-xs text-slate-500">
+                            {isEditMode ? 'ID cannot be changed' : 'Must be unique. Used in the page URL.'}
+                          </p>
                         </div>
                         
                         <div>
-                          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                          <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-1">Category Name</label>
                           <input
                             type="text"
                             name="name"
@@ -320,56 +328,63 @@ export default function AdminCategories() {
                             autoFocus
                             value={formData.name || ''}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm relative z-[110]"
+                            className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                             placeholder="e.g. Mobile Phones"
                           />
                         </div>
                         
                         <div>
-                          <label htmlFor="image" className="block text-sm font-medium text-gray-700">Image URL</label>
-                          <input
-                            type="url"
-                            name="image"
-                            id="image"
-                            required
-                            value={formData.image || ''}
-                            onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm relative z-[110]"
-                            placeholder="https://example.com/image.jpg"
-                          />
+                          <label htmlFor="image" className="block text-sm font-semibold text-slate-700 mb-1">Image URL</label>
+                          <div className="space-y-3">
+                            <input
+                              type="url"
+                              name="image"
+                              id="image"
+                              required
+                              value={formData.image || ''}
+                              onChange={handleInputChange}
+                              className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                              placeholder="https://images.unsplash.com/..."
+                            />
+                            {formData.image && (
+                              <div className="h-32 w-full rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
+                                <img src={formData.image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL')} />
+                              </div>
+                            )}
+                          </div>
                         </div>
                         
                         <div>
-                          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+                          <label htmlFor="description" className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
                           <textarea
                             name="description"
                             id="description"
-                            rows={3}
+                            rows={4}
                             required
                             value={formData.description || ''}
                             onChange={handleInputChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm relative z-[110]"
-                            placeholder="Category description..."
+                            className="block w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none resize-none"
+                            placeholder="Enter a brief description of this category..."
                           ></textarea>
                         </div>
-                        
-                        <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                          <button
-                            type="submit"
-                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:col-start-2 sm:text-sm"
-                          >
-                            {isEditMode ? 'Update' : 'Create'}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleCloseModal}
-                            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
-                    </div>
+                      </div>
+                      
+                      <div className="flex flex-col-reverse sm:flex-row sm:gap-3 pt-4">
+                        <button
+                          type="button"
+                          onClick={handleCloseModal}
+                          className="mt-3 sm:mt-0 w-full inline-flex justify-center items-center px-6 py-3 border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-lg shadow-blue-200"
+                        >
+                          {isEditMode ? 'Save Changes' : 'Create Category'}
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
