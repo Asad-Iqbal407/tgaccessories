@@ -1,10 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { categories } from '@/lib/data';
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+}
 
 const slides = [
   {
@@ -64,8 +70,26 @@ function PaymentHandler() {
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Fetch categories
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
     fetch('/api/products').catch(() => {});
     
     const timer = setInterval(() => {
@@ -144,7 +168,12 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category) => (
+          {loading ? (
+            <div className="col-span-full flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : categories.length > 0 ? (
+            categories.map((category) => (
             <Link key={category.id} href={`/${category.id}`} className="group relative block h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500">
               <div className="absolute inset-0 bg-slate-900 group-hover:scale-105 transition-transform duration-700 z-0">
                 <img
@@ -170,7 +199,12 @@ export default function Home() {
                 </div>
               </div>
             </Link>
-          ))}
+          ))
+          ) : (
+            <div className="col-span-full text-center py-12 text-slate-500">
+              No categories found.
+            </div>
+          )}
         </div>
 
         <div className="mt-24">
