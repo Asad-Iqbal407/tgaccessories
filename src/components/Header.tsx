@@ -30,7 +30,11 @@ export default function Header() {
             <Link href="/" className="flex items-center space-x-3 group">
               <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-gradient-to-br from-primary to-accent p-0.5 transition-transform duration-300 group-hover:scale-105">
                 <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
-                  <Image src="/logo.png" alt="TG" width={40} height={40} priority className="w-full h-full object-cover" />
+                  <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
               </div>
               <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 group-hover:text-primary transition-colors">
