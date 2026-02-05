@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TG Accessories - Quality Accessories for All Your Needs",
   description: "Discover our wide range of accessories including SIMs, smoking papers, chargers, and cables.",
+  verification: {
+    google: "7V_ZmH1E4vcHvNu-chcEIozDjpQZ5xaqrJezWOjDUC0",
+  },
 };
 
 export default function RootLayout({
