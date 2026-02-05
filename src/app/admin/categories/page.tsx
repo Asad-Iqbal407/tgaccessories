@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import AdminSidebar from '@/components/AdminSidebar';
 
 interface Category {
@@ -104,11 +105,9 @@ export default function AdminCategories() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitting form...', { isEditMode, formData });
     
     try {
       if (isEditMode && currentCategory.id) {
-        console.log(`Updating category: ${currentCategory.id}`);
         // Update existing category
         const response = await fetch(`/api/categories/${currentCategory.id}`, {
           method: 'PUT',
@@ -123,7 +122,6 @@ export default function AdminCategories() {
         });
         
         const data = await response.json();
-        console.log('Update Response:', { status: response.status, data });
 
         if (response.ok) {
           alert('Category updated successfully');
@@ -133,7 +131,6 @@ export default function AdminCategories() {
           alert(`Failed to update category: ${data.error || 'Unknown error'}`);
         }
       } else {
-        console.log('Creating new category');
         // Create new category
         const response = await fetch('/api/categories', {
           method: 'POST',
@@ -144,7 +141,6 @@ export default function AdminCategories() {
         });
         
         const data = await response.json();
-        console.log('Create Response:', { status: response.status, data });
 
         if (response.ok) {
           alert('Category created successfully');
@@ -238,10 +234,12 @@ export default function AdminCategories() {
             {categories.map((category) => (
               <div key={category.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden group hover:shadow-md transition-all">
                 <div className="h-48 overflow-hidden relative">
-                  <img 
+                  <Image 
                     src={category.image} 
                     alt={category.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
@@ -352,8 +350,8 @@ export default function AdminCategories() {
                         placeholder="https://images.unsplash.com/..."
                       />
                       {formData.image && (
-                        <div className="h-32 w-full rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
-                          <img src={formData.image} alt="Preview" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL')} />
+                        <div className="h-32 w-full rounded-xl overflow-hidden border border-slate-100 bg-slate-50 relative">
+                          <Image src={formData.image} alt="Preview" fill className="object-cover" unoptimized />
                         </div>
                       )}
                     </div>

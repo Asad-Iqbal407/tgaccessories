@@ -57,7 +57,12 @@ export default function AdminSidebar() {
     }
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
     localStorage.removeItem('adminToken');
     router.push('/admin/login');
   };

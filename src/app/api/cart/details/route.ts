@@ -17,11 +17,7 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('cart-session')?.value;
 
-    console.log('Saving details for session:', sessionId);
-    console.log('Details:', { name, email, phone, address });
-
     if (!sessionId) {
-      console.log('No session ID found');
       return NextResponse.json(
         { error: 'No cart session found' },
         { status: 400 }
@@ -41,10 +37,7 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log('Update result:', result);
-
     if (result.matchedCount === 0) {
-      console.log('No matching cart found for session:', sessionId);
       return NextResponse.json(
         { error: 'Cart not found' },
         { status: 404 }

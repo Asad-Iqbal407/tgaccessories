@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -64,10 +65,11 @@ export default function SingleBlogPage() {
       {/* Hero Header */}
       <div className="relative h-[400px] w-full">
         <div className="absolute inset-0 bg-slate-900/50 z-10" />
-        <img 
-          src={post.image || 'https://images.unsplash.com/photo-1499750310159-5b5f0d6920a9?w=1600&h=900&fit=crop'} 
-          alt={post.title} 
-          className="w-full h-full object-cover"
+        <Image
+          src={post.image || 'https://images.unsplash.com/photo-1499750310159-5b5f0d6920a9?w=1600&h=900&fit=crop'}
+          alt={post.title}
+          fill
+          className="object-cover"
         />
         <div className="absolute inset-0 z-20 flex flex-col justify-end p-8 max-w-4xl mx-auto w-full">
           <div className="mb-4">

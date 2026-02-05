@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import clientPromise from '@/lib/mongodb';
 
+interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  addedAt: Date;
+}
+
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -76,7 +85,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Check if product already in cart
-    const existingItemIndex = cart!.items.findIndex((item: any) => item.productId === productId);
+    const existingItemIndex = cart!.items.findIndex((item: CartItem) => item.productId === productId);
 
     if (existingItemIndex > -1) {
       // Update quantity
@@ -94,7 +103,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate total
-    cart.total = cart.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+    cart.total = cart.items.reduce((sum: number, item: CartItem) => sum + (item.price * item.quantity), 0);
     cart.updatedAt = new Date();
 
     // Save cart
@@ -163,7 +172,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update item quantity
-    const itemIndex = cart.items.findIndex((item: any) => item.productId === productId);
+    const itemIndex = cart.items.findIndex((item: CartItem) => item.productId === productId);
 
     if (itemIndex === -1) {
       return NextResponse.json(
@@ -181,7 +190,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Recalculate total
-    cart.total = cart.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+    cart.total = cart.items.reduce((sum: number, item: CartItem) => sum + (item.price * item.quantity), 0);
     cart.updatedAt = new Date();
 
     // Save cart
@@ -239,10 +248,10 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Remove item from cart
-    cart.items = cart.items.filter((item: any) => item.productId !== productId);
+    cart.items = cart.items.filter((item: CartItem) => item.productId !== productId);
 
     // Recalculate total
-    cart.total = cart.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+    cart.total = cart.items.reduce((sum: number, item: CartItem) => sum + (item.price * item.quantity), 0);
     cart.updatedAt = new Date();
 
     // Save cart

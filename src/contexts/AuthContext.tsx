@@ -72,20 +72,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Check authentication on mount
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  // Update localStorage when authentication state changes
-  useEffect(() => {
-    if (state.isAuthenticated && !state.loading) {
-      localStorage.setItem('isAuthenticated', 'true');
-    } else if (!state.loading) {
-      localStorage.removeItem('isAuthenticated');
-    }
-  }, [state.isAuthenticated, state.loading]);
-
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/me');
@@ -100,6 +86,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: 'AUTH_ERROR' });
     }
   };
+
+  // Check authentication on mount
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  // Update localStorage when authentication state changes
+  useEffect(() => {
+    if (state.isAuthenticated && !state.loading) {
+      localStorage.setItem('isAuthenticated', 'true');
+    } else if (!state.loading) {
+      localStorage.removeItem('isAuthenticated');
+    }
+  }, [state.isAuthenticated, state.loading]);
 
   const login = async (email: string, password: string) => {
     try {

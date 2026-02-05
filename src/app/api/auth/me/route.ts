@@ -1,11 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
+import { ObjectId } from 'mongodb';
 import clientPromise from '@/lib/mongodb';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-export async function GET(request: NextRequest) {
+interface DecodedToken {
+  userId: string;
+  role?: string;
+}
+
+export async function GET() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth-token')?.value;
@@ -18,14 +24,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
     // Connect to MongoDB and get user data
     const client = await clientPromise;
     const db = client.db('tgaccessories');
 
     const user = await db.collection('users').findOne(
-      { _id: decoded.userId },
+      { _id: new ObjectId(decoded.userId) },
       { projection: { password: 0 } }
     );
 

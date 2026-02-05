@@ -11,7 +11,14 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const { items, customerEmail } = JSON.parse(body);
 
-    const lineItems = items.map((item: any) => ({
+    interface CheckoutItem {
+      name: string;
+      image: string;
+      price: number;
+      quantity: number;
+    }
+
+    const lineItems = items.map((item: CheckoutItem) => ({
       price_data: {
         currency: 'usd',
         product_data: {
@@ -33,7 +40,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error) {
+  } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

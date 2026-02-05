@@ -21,11 +21,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { id, name, description, image } = body;
-    console.log('--- API POST Category ---');
-    console.log('Body:', body);
     
     if (!id || !name || !image) {
-      console.log('❌ Missing required fields');
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     
@@ -35,7 +32,6 @@ export async function POST(request: Request) {
     // Check if category ID already exists
     const existingCategory = await db.collection('categories').findOne({ id });
     if (existingCategory) {
-      console.log(`❌ Category ID already exists: ${id}`);
       return NextResponse.json({ error: 'Category ID already exists' }, { status: 400 });
     }
     
@@ -48,8 +44,7 @@ export async function POST(request: Request) {
       updatedAt: new Date()
     };
     
-    const result = await db.collection('categories').insertOne(newCategory);
-    console.log('✅ Category created successfully:', result.insertedId);
+    await db.collection('categories').insertOne(newCategory);
     
     return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {

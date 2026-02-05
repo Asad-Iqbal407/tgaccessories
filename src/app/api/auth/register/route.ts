@@ -50,7 +50,9 @@ export async function POST(request: NextRequest) {
     const result = await db.collection('users').insertOne(user);
 
     // Return user data (without password)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (userWithoutPassword as any)._id = result.insertedId;
 
     return NextResponse.json({

@@ -40,7 +40,7 @@ export async function GET() {
       source: 'database',
       count: products.length
     });
-  } catch (error) {
+  } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

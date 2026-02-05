@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import AdminSidebar from '@/components/AdminSidebar';
 
 interface CartItem {
@@ -43,6 +44,7 @@ export default function AdminOrders() {
     }
 
     fetchCarts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const fetchCarts = async () => {
@@ -54,7 +56,6 @@ export default function AdminOrders() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched carts:', data.carts); // Debug log
         setCarts(data.carts);
       } else {
         router.push('/admin/login');
@@ -184,8 +185,8 @@ export default function AdminOrders() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {cart.items.map((item, index) => (
                         <div key={index} className="flex items-center p-3 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100 transition-colors">
-                          <div className="h-16 w-16 rounded-lg bg-white border border-slate-200 overflow-hidden flex-shrink-0">
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          <div className="h-16 w-16 rounded-lg bg-white border border-slate-200 overflow-hidden flex-shrink-0 relative">
+                            <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
                           </div>
                           <div className="ml-4 flex-1">
                             <div className="flex justify-between items-start">

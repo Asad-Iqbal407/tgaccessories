@@ -4,6 +4,10 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+interface DecodedToken {
+  role: string;
+}
+
 async function verifyAdmin(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -12,14 +16,14 @@ async function verifyAdmin(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
     if (decoded.role !== 'admin') {
       return null;
     }
 
     return decoded;
-  } catch (error) {
+  } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   }
 }
@@ -40,11 +44,6 @@ export async function GET(request: NextRequest) {
     // Fetch from orders collection instead of carts
     const orders = await db.collection('orders').find({}).sort({ createdAt: -1 }).toArray();
     
-    // Log one order to check structure
-    if (orders.length > 0) {
-      console.log('Sample order from DB:', JSON.stringify(orders[0], null, 2));
-    }
-
     // Transform MongoDB documents to match Cart interface
     const transformedCarts = orders.map((order) => ({
       id: order.orderId || order._id.toString(), // Use orderId if available, fallback to _id

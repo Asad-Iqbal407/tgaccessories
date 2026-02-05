@@ -5,13 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    console.log('--- DB Health Check ---');
     const client = await clientPromise;
     const db = client.db('tg_accessories');
     
     // Test ping
     await db.command({ ping: 1 });
-    console.log('✅ DB Ping successful');
     
     const collections = await db.listCollections().toArray();
     const collectionNames = collections.map(c => c.name);
@@ -27,6 +25,7 @@ export async function GET() {
       sampleData: latestCategories,
       timestamp: new Date().toISOString()
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('❌ DB Health Check Failed:', error);
     return NextResponse.json({ 

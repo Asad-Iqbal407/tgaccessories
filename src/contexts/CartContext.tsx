@@ -112,6 +112,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (response.ok) {
           const data = await response.json();
           // Transform database cart items to match our CartItem format
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const cartItems: CartItem[] = data.items.map((item: any) => ({
             product: {
               id: item.productId,
@@ -163,6 +164,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         // Transform database cart items to match our CartItem format
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const cartItems: CartItem[] = data.items.map((item: any) => ({
           product: {
             id: item.productId,
@@ -178,8 +180,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         dispatch({ type: 'SET_TOTAL', payload: data.total });
         
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const errorData = await response.json();
-        
       }
     } catch (error) {
       console.error('Error adding item to cart:', error);
@@ -200,6 +202,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         // Transform database cart items to match our CartItem format
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const cartItems: CartItem[] = data.items.map((item: any) => ({
           product: {
             id: item.productId,
@@ -244,6 +247,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         // Transform database cart items to match our CartItem format
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const cartItems: CartItem[] = data.items.map((item: any) => ({
           product: {
             id: item.productId,

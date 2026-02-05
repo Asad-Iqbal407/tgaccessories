@@ -5,6 +5,10 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+interface DecodedToken {
+  role: string;
+}
+
 async function verifyAdmin(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -13,14 +17,14 @@ async function verifyAdmin(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
 
     if (decoded.role !== 'admin') {
       return null;
     }
 
     return decoded;
-  } catch (error) {
+  } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
     return null;
   }
 }

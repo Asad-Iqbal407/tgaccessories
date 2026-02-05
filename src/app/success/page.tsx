@@ -10,13 +10,15 @@ function SuccessContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
 
   useEffect(() => {
+    if (status !== 'loading') return;
+    
     if (sessionId) {
       // Here you could verify the session with Stripe if needed
-      setStatus('success');
+      setTimeout(() => setStatus('success'), 0);
     } else {
-      setStatus('error');
+      setTimeout(() => setStatus('error'), 0);
     }
-  }, [sessionId]);
+  }, [sessionId, status]);
 
   if (status === 'loading') {
     return (

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface BlogPost {
@@ -57,11 +58,12 @@ export default function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
               <article key={post.id} className="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-200 flex flex-col">
-                <div className="h-48 bg-slate-100 overflow-hidden">
-                  <img 
+                <div className="h-48 bg-slate-100 overflow-hidden relative">
+                  <Image 
                     src={post.image || 'https://images.unsplash.com/photo-1499750310159-5b5f0d6920a9?w=800&h=600&fit=crop'} 
                     alt={post.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" 
+                    fill
+                    className="object-cover transition-transform duration-500 hover:scale-105" 
                   />
                 </div>
                 <div className="p-6 flex-1 flex flex-col">

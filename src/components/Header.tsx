@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
-import Image from 'next/image';
 import { useState, useRef } from 'react';
 
 export default function Header() {
@@ -22,39 +21,52 @@ export default function Header() {
     }, 200);
   };
 
+  const navItems = [
+    { name: 'Home', href: '/' },
+    { name: 'SIMs', href: '/sims' },
+    { name: 'Smoking Papers', href: '/smoking-papers' },
+    { name: 'Chargers', href: '/chargers' },
+    { name: 'Cables', href: '/cables' },
+    { name: 'Power', href: '/power' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Contact', href: '/contact' },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 glass border-b border-white/10 dark:border-white/5 shadow-sm bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 glass-subtle border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-3 group">
-              <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-gradient-to-br from-primary to-accent p-0.5 transition-transform duration-300 group-hover:scale-105">
-                <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
-                  <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-gradient-to-br from-primary via-accent to-secondary p-0.5 transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
+              <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center overflow-hidden">
+                <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 group-hover:text-primary transition-colors">
-                TG Accessories
-              </span>
+            </div>
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 group-hover:text-gradient-primary transition-all duration-300">
+              TG Accessories
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-1">
+            <Link href="/" className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200">
+              Home
             </Link>
-          </div>
 
-          <nav className="hidden md:flex items-center space-x-2">
-            <Link href="/" className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">Home</Link>
-
+            {/* Shop Dropdown */}
             <div
               className="relative"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <button
-                className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center"
+                className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200 flex items-center"
                 aria-expanded={shopOpen}
-                onClick={() => setShopOpen(!shopOpen)}
               >
                 Shop
                 <svg className={`w-4 h-4 ml-2 transition-transform duration-200 ${shopOpen ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
@@ -63,11 +75,11 @@ export default function Header() {
               </button>
               
               <div 
-                className={`absolute left-0 top-full pt-2 w-[480px] transition-all duration-200 origin-top-left ${
+                className={`absolute left-0 top-full pt-2 w-80 transition-all duration-200 origin-top-left ${
                   shopOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
                 }`}
               >
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-slate-950/50 p-3">
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { name: 'SIMs', href: '/sims', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
@@ -95,24 +107,31 @@ export default function Header() {
               </div>
             </div>
 
-            <Link href="/blog" className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">Blog</Link>
+            <Link href="/blog" className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200">
+              Blog
+            </Link>
+            <Link href="/contact" className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200">
+              Contact
+            </Link>
           </nav>
 
-          <div className="flex items-center space-x-4">
-            <Link href="/cart" className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-3">
+            {/* Cart Button */}
+            <Link href="/cart" className="relative p-2.5 text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200 group">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {getItemCount() > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-900">
-                  {getItemCount()}
+                <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-slate-900 animate-scale-in">
+                  {getItemCount() > 99 ? '99+' : getItemCount()}
                 </span>
               )}
             </Link>
             
             {/* Mobile menu button */}
             <button 
-              className="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:text-primary transition-colors"
+              className="lg:hidden p-2.5 text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all duration-200"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -127,18 +146,9 @@ export default function Header() {
         </div>
 
         {/* Mobile menu */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
           <nav className="flex flex-col space-y-1 py-4 border-t border-slate-200 dark:border-slate-800">
-            {[
-              { name: 'Home', href: '/' },
-              { name: 'SIMs', href: '/sims' },
-              { name: 'Smoking Papers', href: '/smoking-papers' },
-              { name: 'Chargers', href: '/chargers' },
-              { name: 'Cables', href: '/cables' },
-              { name: 'Power', href: '/power' },
-              { name: 'Blog', href: '/blog' },
-              { name: 'Contact', href: '/contact' },
-            ].map((item) => (
+            {navItems.map((item) => (
               <Link 
                 key={item.name}
                 href={item.href} 
