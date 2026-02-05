@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { categories } from '@/lib/data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tgaccessories.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tgaccessories.vercel.app';
   
   // Static routes
   const routes = [
